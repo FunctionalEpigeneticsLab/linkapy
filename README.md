@@ -3,6 +3,7 @@
 [![lint](https://github.com/WardDeb/linkapy/actions/workflows/lint.yml/badge.svg)](https://github.com/WardDeb/linkapy/actions/workflows/lint.yml)
 [![tests](https://github.com/WardDeb/linkapy/actions/workflows/test.yml/badge.svg)](https://github.com/WardDeb/linkapy/actions/workflows/test.yml)
 [![PyPI version](https://img.shields.io/pypi/v/linkapy)](https://pypi.org/project/linkapy/)
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/WardDeb/d0010eb142b962632f94c164c502b506/raw/coverage.json)
 
 # linkapy
 A framework to process and analyse multi-modal single-cell data.
