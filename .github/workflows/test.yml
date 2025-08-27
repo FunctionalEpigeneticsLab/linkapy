@@ -21,7 +21,6 @@ jobs:
       - name: get percentage
         run: |
           percent=$(jq '.totals.percent_covered' coverage.json | cut -d. -f1)
-          percent=$(echo "$percent * 100" | bc | cut -d. -f1)
           echo "PERCENTAGE=$percent" >> $GITHUB_ENV
       - name: Create_badge
         uses: schneegans/dynamic-badges-action@v1.7.0
@@ -30,7 +29,7 @@ jobs:
           gistID: d0010eb142b962632f94c164c502b506
           filename: coverage.json
           label: Coverage
-          message: ${{ env.PERCENTAGE }}
+          message: "${{ env.PERCENTAGE }}%"
           valColorRange: ${{ env.PERCENTAGE }}
           maxColorRange: 100
           minColorRange: 0
