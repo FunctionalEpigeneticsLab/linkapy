@@ -23,6 +23,7 @@ jobs:
           percent=$(jq '.totals.percent_covered' coverage.json | cut -d. -f1)
           echo "PERCENTAGE=$percent" >> $GITHUB_ENV
       - name: Create_badge
+        if: github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
           auth: ${{ secrets.GIST }}
