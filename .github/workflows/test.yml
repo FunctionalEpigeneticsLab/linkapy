@@ -17,10 +17,10 @@ jobs:
           pip install .[dev]
       - name: run tests
         run: |
-          pytest -v --cov=linkapy --cov-report=xml
+          pytest -v --cov=linkapy --cov-report=json
       - name: get percentage
         run: |
-          percent=$(xmllint --xpath "string(//coverage/@line-rate)" coverage.xml)
+          percent=$(jq '.totals.percent_covered' coverage.json | cut -d. -f1)
           percent=$(echo "$percent * 100" | bc | cut -d. -f1)
           echo "PERCENTAGE=$percent" >> $GITHUB_ENV
       - name: Create_badge
