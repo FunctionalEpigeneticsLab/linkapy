@@ -17,4 +17,8 @@ jobs:
           pip install .[dev]
       - name: run tests
         run: |
-          pytest -v --cov=linkapy
+          pytest -v --cov=linkapy --cov-report=xml
+      - name: codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} 
