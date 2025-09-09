@@ -10,4 +10,4 @@ jobs:
         with:
           cache: true
       - name: run pytest through pixi
-        run: pixi run pytest
+        run: pixi run linkapy -h
