@@ -9,5 +9,5 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.9.0
         with:
           cache: true
-      - name: run pytest through pixi
+      - name: run linkapy through pixi
         run: pixi run linkapy -h
