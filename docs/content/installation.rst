@@ -38,3 +38,10 @@ or
 .. code-block:: bash
 
     pip install .[docs,dev,build]
+
+Linkapy can also be used through pixi. After cloning the repository, you can install / use linkapy with:
+
+.. code-block:: bash
+
+    pixi run linkapy -h
+
