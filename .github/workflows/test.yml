@@ -21,6 +21,7 @@ jobs:
       - name: get percentage
         run: |
           percent=$(jq '.totals.percent_covered' coverage.json | cut -d. -f1)
+          echo "PERCENTAGE=$percent"
           echo "PERCENTAGE=$percent" >> $GITHUB_ENV
       - name: Create_badge
         if: github.ref == 'refs/heads/main'
@@ -29,7 +30,7 @@ jobs:
           auth: ${{ secrets.GIST }}
           gistID: d0010eb142b962632f94c164c502b506
           filename: coverage.json
-          label: Coverage
+          label: Python Coverage
           message: "${{ env.PERCENTAGE }}%"
           valColorRange: ${{ env.PERCENTAGE }}
           maxColorRange: 100

@@ -4,7 +4,7 @@
 [![tests](https://github.com/WardDeb/linkapy/actions/workflows/test.yml/badge.svg)](https://github.com/WardDeb/linkapy/actions/workflows/test.yml)
 [![PyPI version](https://img.shields.io/pypi/v/linkapy)](https://pypi.org/project/linkapy/)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/WardDeb/d0010eb142b962632f94c164c502b506/raw/coverage.json)
-
+![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/WardDeb/f4d532defe4f2caecec457d6653d933e/raw/coverage.json)
 # linkapy
 A framework to process and analyse multi-modal single-cell data.
 Linkapy is mainly used to process single-cell methylation data, and is focused on creating an integrated (muData) object of multimodal single-cell data. In this context it means that multiple modalities (e.g. accessibility, DNA methylation, RNA expression) are available from the same cell. 
