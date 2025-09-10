@@ -12,7 +12,7 @@ jobs:
       - name: cargo-llvm-cov
         run: cargo install cargo-llvm-cov
       - name: cargo test
-        run: cargo test --verbose
+        run: cargo llvm-cov --output-path test.linfo --no-cfg-coverage
       - name: get percentage
         run: |
           percent=$(awk '/^TOTAL/ {print $(NF-6)}' test.linfo | sed 's/%//g')
