@@ -29,7 +29,7 @@ jobs:
           auth: ${{ secrets.GIST }}
           gistID: d0010eb142b962632f94c164c502b506
           filename: coverage.json
-          label: Coverage
+          label: Python Coverage
           message: "${{ env.PERCENTAGE }}%"
           valColorRange: ${{ env.PERCENTAGE }}
           maxColorRange: 100
