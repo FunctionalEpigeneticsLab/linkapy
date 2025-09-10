@@ -21,6 +21,7 @@ jobs:
       - name: get percentage
         run: |
           percent=$(jq '.totals.percent_covered' coverage.json | cut -d. -f1)
+          echo "PERCENTAGE=$percent"
           echo "PERCENTAGE=$percent" >> $GITHUB_ENV
       - name: Create_badge
         if: github.ref == 'refs/heads/main'
