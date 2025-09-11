@@ -20,4 +20,6 @@ autoapi_dirs = ['../python']
 autodoc_mock_imports = ['linkapy.linkapy']
 autoapi_ignore = [
     '*CLI.py',
+    '*conftest.py',
+    '*test_*.py'
 ]
