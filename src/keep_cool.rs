@@ -7,7 +7,7 @@ use rayon::ThreadPoolBuilder;
 use std::cmp::Ordering;
 use sprs::{CsMat, TriMat};
 use sprs::io::write_matrix_market;
-use crate::types::{Region, CoolRegion};
+use crate::types::{Region, MethRegion};
 use crate::reader::{read_meth, parse_chromsizes, parse_region};
 
 #[allow(clippy::too_many_arguments)]
@@ -92,12 +92,12 @@ pub fn parse_cools(
     let aggregated_metrics: Vec<Vec<((f32, f32, f32), f32)>>  = pool.install(|| {
         coolfiles
             .par_iter()
-            .map(|coolfile| {
-                let coolregions = read_meth(coolfile);
+            .map(|methfile| {
+                let methregions = read_meth(methfile);
                 parsed_regions
                     .par_iter()
                     .map(|region| {
-                        let filtered: Vec<&CoolRegion> = coolregions
+                        let filtered: Vec<&MethRegion> = methregions
                             .iter()
                             .filter(|x| {
                                 x.chrom == region.chrom 

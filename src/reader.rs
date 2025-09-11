@@ -1,35 +1,51 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use flate2::read::GzDecoder;
-use crate::types::CoolRegion;
-use crate::types::{Region};
+use crate::types::MethRegion;
+use crate::types::{Region, MethFileType};
 
-pub fn read_meth(_f: &str) -> Vec<CoolRegion> {
-    let mut coolregions: Vec<CoolRegion> = Vec::new();
-    let reader = BufReader::new(GzDecoder::new(File::open(_f).unwrap()));
+pub fn read_meth(_f: &str) -> Vec<MethRegion> {
+    let mut methregions: Vec<MethRegion> = Vec::new();
+    
+    let reader: Box<dyn BufRead> = match is_gzipped(_f) {
+        Ok(true) => {
+            Box::new(BufReader::new(GzDecoder::new(File::open(_f).unwrap())))
+        },
+        Ok(false) => {
+            Box::new(BufReader::new(File::open(_f).unwrap()))
+        },
+        Err(e) => {
+            panic!("Error reading file {}: {}", _f, e);
+        }
+    };
+    // Decide the methylation file type, by getting the first non-comment line.
+    let firstline = reader.lines()
+        .filter_map(|l| l.ok())
+        .find(|line| !line.trim_start().starts_with('#'));
+    let methtype = decide_methtype(firstline);
+    println!("Methylation filetype decided as {:?}", methtype);
+
+    let reader: Box<dyn BufRead> = match is_gzipped(_f) {
+        Ok(true) => {
+            Box::new(BufReader::new(GzDecoder::new(File::open(_f).unwrap())))
+        },
+        Ok(false) => {
+            Box::new(BufReader::new(File::open(_f).unwrap()))
+        },
+        Err(e) => {
+            panic!("Error reading file {}: {}", _f, e);
+        }
+    };
+
     for line in reader.lines() {
-        match line {
-            Ok(line) => {
-                let fields: Vec<&str> = line.split('\t').collect();
-                let chrom = fields[0].to_string();
-                let pos = fields[1].parse::<u32>().unwrap();
-                let meth = fields[4].parse::<u32>().unwrap();
-                let total = fields[5].parse::<u32>().unwrap();
-                coolregions.push(
-                    CoolRegion{
-                        chrom,
-                        pos,
-                        meth,
-                        total,
-                    }
-                );
-            }
-            Err(_e) => {
-                panic!("Error reading file {}", _f);
-            }
+        let line = line.map_err(|e| format!("Error reading line: {}", e)).unwrap();
+        
+        match methtype.parse_line(&line).unwrap() {
+            Some(region) => methregions.push(region),
+            None => { /* e.g., skip empty or invalid CpGReport lines */ }
         }
     }
-    coolregions
+    methregions
 }
 
 pub fn parse_chromsizes(file: &str, binsize: u32) -> Vec<Region> {
@@ -81,18 +97,16 @@ pub fn parse_region(reg: String, class: String) -> Vec<Region> {
     let mut regions = Vec::new();
     let sample = reg.clone();
 
-    // Get suffix from reg
-    let suffix = reg.split('.').next_back().unwrap();
-    // Two options: gz (bed.gz), bed(bed)
-    let reader: Box<dyn BufRead> = match suffix {
-        "gz" => {
-            println!("Region parse match gz");
+    let reader: Box<dyn BufRead> = match is_gzipped(&reg) {
+        Ok(true) => {
             Box::new(BufReader::new(GzDecoder::new(File::open(reg).unwrap())))
         },
-        "bed" => {
+        Ok(false) => {
             Box::new(BufReader::new(File::open(reg).unwrap()))
         },
-        _ => panic!("File format not supported"),
+        Err(e) => {
+            panic!("Error reading file {}: {}", reg, e);
+        }
     };
 
     let lines = reader.lines();
@@ -142,4 +156,60 @@ pub fn parse_region(reg: String, class: String) -> Vec<Region> {
         }
     }
     regions
+}
+
+
+
+fn is_gzipped(path: &str) -> std::io::Result<bool> {
+    let mut file = File::open(path)?;
+    let mut magic = [0u8; 2];
+    file.read_exact(&mut magic)?;
+    Ok(magic == [0x1F, 0x8B])
+}
+
+fn decide_methtype(line: Option<String>) -> MethFileType {
+    if let Some(l) = line {
+        let fields: Vec<&str> = l.split('\t').collect();
+        match fields.len() {
+            // 4 => {
+            //     Ok(MethFileType::BismarkBedgraph)
+            // },
+            6 => {
+                // Either MethylDackel bedgraph or BismarkCov
+                // The difference is small:
+                // MethylDackel: chrom, start, end, percent, methylcount, coverage
+                // BismarkCov: chrom, start, end, percent, methylcount, nonmethylcount
+                let perc = fields[3].parse::<f32>().unwrap();
+                let meth: u32 = fields[4].parse::<u32>().unwrap();
+                let prop_cov: u32 = fields[5].parse::<u32>().unwrap();
+                let methyldackel_perc = (meth as f32/ prop_cov as f32) * 100.0;
+                let bismarkcov_perc = (meth as f32/(meth as f32 + prop_cov as f32)) * 100.0;
+                if (perc - methyldackel_perc).abs() < 0.01 {
+                    return MethFileType::MethylDackel;
+                }
+                if (perc - bismarkcov_perc).abs() < 0.01 {
+                    return MethFileType::BismarkCov;
+                }
+                panic!("Could not decide between MethylDackel {} != {}, and BismarkCov {} != {}", perc, methyldackel_perc, perc, bismarkcov_perc);
+            },
+            7 => {
+                // Either Allcools tsv of Bismark CpG report
+                // The difference here is bit more difficult to detect
+                // Allcools: chrom, pos, strand, context, methylcount, coverage, sigtest
+                // Bismark CpG report: chrom, pos, strand, methylcount, nonmethylcount, C-context, Trinucleotide context
+                // If fields 4 and 5 are both integers, it's allcools file.
+                let meth = fields[4].parse::<u32>();
+                let cov = fields[5].parse::<u32>();
+                if meth.is_ok() && cov.is_ok() {
+                    MethFileType::AllCools
+                } else {
+                    MethFileType::BismarkCpGReport
+                }
+            },
+            _ => panic!("Could not decide methylation filetype, as it has {} columns.", fields.len())
+        }
+    }
+    else {
+        panic!("Could not decide methylation filetype, as the file is empty or only contains comments.");
+    }
 }
