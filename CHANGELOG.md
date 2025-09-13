@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/FunctionalEpigeneticsLab/linkapy/compare/v1.2.1...v1.3.0) (2025-09-12)
+
+
+### Features
+
+* meth file support for methyldackel, allcools, bismark cov and bismark CpG. Both gz and regular. ([#32](https://github.com/FunctionalEpigeneticsLab/linkapy/issues/32)) ([88efc83](https://github.com/FunctionalEpigeneticsLab/linkapy/commit/88efc83d9372f0475cda6ad663194607751f5c68))
+
 ## [1.2.1](https://github.com/WardDeb/linkapy/compare/v1.2.0...v1.2.1) (2025-08-22)
 
 
