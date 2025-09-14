@@ -166,6 +166,7 @@ linkapi.py
 linkcmd.sh
 test.sh
 Cargo.lock
+linkapy_example
 
 # Pixi stuff
 .pixi*

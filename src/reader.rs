@@ -23,7 +23,6 @@ pub fn read_meth(_f: &str) -> Vec<MethRegion> {
         .filter_map(|l| l.ok())
         .find(|line| !line.trim_start().starts_with('#'));
     let methtype = decide_methtype(firstline);
-    println!("Methylation filetype decided as {:?}", methtype);
 
     let reader: Box<dyn BufRead> = match is_gzipped(_f) {
         Ok(true) => {

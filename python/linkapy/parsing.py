@@ -1,9 +1,6 @@
 from pathlib import Path
 import signal
 from rich.console import Console
-from rich.logging import RichHandler
-from linkapy.linkapy import parse_cools
-import logging
 import anndata as ad
 import mudata as md
 import numpy as np
@@ -13,12 +10,13 @@ import pandas as pd
 from Levenshtein import distance as ls_dist
 from difflib import SequenceMatcher
 from typing import List
+from linkapy.linkapy import parse_cools
+from linkapy.logger import setup_logger
 
 class Linkapy_Parser:
     '''
     Linkapy_Parser mainly functions to create matrices (arrow format for RNA, mtx format for accessibility / methylation)
-    from directories containing analyzed scNMT-seq data. Theoretically this could be any type of multi-modal (read: RNA / methylation) data, but the class is written with the scNMT workflow
-    from the Thienpont lab (KU Leuven) in mind.
+    from directories containing processed multi-modal single-cell data.
     
     At least one of both items should be provided:
      - methylation_path and/or transcriptome_path
@@ -61,25 +59,7 @@ class Linkapy_Parser:
 
         # Set up log
         self.logfile = self.output / f'{self.project}.log'
-        self.logger = logging.getLogger()
-        rich_handler = RichHandler(rich_tracebacks=True, show_time=False, show_level=True, show_path=False)
-        _fmt = logging.Formatter('%(levelname)s - %(asctime)s - %(message)s', datefmt="%H:%M:%S")
-        file_handler = logging.FileHandler(self.logfile)
-        
-        file_handler.setFormatter(_fmt)
-        # Set verbosity
-        if verbose:
-            self.logger.setLevel(logging.DEBUG)
-            file_handler.setLevel(logging.DEBUG)
-            rich_handler.setLevel(logging.DEBUG)
-        else:
-            self.logger.setLevel(logging.INFO)
-            file_handler.setLevel(logging.INFO)
-            rich_handler.setLevel(logging.INFO)
-            
-
-        self.logger.addHandler(rich_handler)
-        self.logger.addHandler(file_handler)
+        self.logger = setup_logger(self.logfile, verbose)        
 
         console = Console()
         console.rule("[bold green]Linkapy Parser[/bold green]")
