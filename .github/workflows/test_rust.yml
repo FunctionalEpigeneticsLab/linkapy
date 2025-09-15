@@ -1,0 +1,33 @@
+name: rusttests
+on: [push, pull_request]
+jobs:
+  cargo_test:
+    name: run cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable
+      - name: cargo build
+        run: cargo build --verbose
+      - name: cargo-llvm-cov
+        run: cargo install cargo-llvm-cov
+      - name: cargo test
+        run: cargo llvm-cov --output-path test.linfo --no-cfg-coverage
+      - name: get percentage
+        run: |
+          percent=$(awk '/^TOTAL/ {print $(NF-6)}' test.linfo | sed 's/%//g')
+          percent_int=$(printf "%.0f" "$percent")
+          echo "PERCENTAGE=$percent_int"
+          echo "PERCENTAGE=$percent_int" >> $GITHUB_ENV
+      - name: Create_badge
+        if: github.ref == 'refs/heads/main'
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST }}
+          gistID: f4d532defe4f2caecec457d6653d933e
+          filename: coverage.json
+          label: Rust Coverage
+          message: "${{ env.PERCENTAGE }}%"
+          valColorRange: ${{ env.PERCENTAGE }}
+          maxColorRange: 100
+          minColorRange: 0
