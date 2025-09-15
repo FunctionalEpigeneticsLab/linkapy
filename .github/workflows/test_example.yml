@@ -1,0 +1,34 @@
+name: test_example
+on: [push, pull_request]
+jobs:
+  pytests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      - name: test
+        run: |
+          pip install .
+      - name: download example data
+        run: |
+          linkapy example
+      - name: parse example data
+        run: |
+          linkapy parsing \
+            -m linkapy_example/test_data \
+            -t linkapy_example/test_data \
+            -o linkapy_example/linkapy_out \
+            -j 4 \
+            -r linkapy_example/test_data/genes.bed \
+            -r linkapy_example/test_data/promoters.bed \
+            --methylation_pattern *GCHN*tsv.gz \
+            --methylation_pattern_names ATAC \
+            --methylation_pattern *WCGN*tsv.gz \
+            --methylation_pattern_names METH \
+            --transcriptome_pattern *rna.tsv

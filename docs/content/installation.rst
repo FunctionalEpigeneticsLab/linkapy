@@ -1,4 +1,4 @@
-installation
+Installation
 ------------
 
 Linkapy can be installed via pypi:

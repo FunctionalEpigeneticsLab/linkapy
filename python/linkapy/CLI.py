@@ -79,3 +79,15 @@ def parsing(ctx, **kwargs) -> None:
         raise click.ClickException(f"ERROR: {str(e)}. Please check the provided parameters")
 
     return
+
+@linkapy.command(context_settings={"show_default": True})
+@click.help_option("-h", "--help")
+@click.option('--output' ,'-o', type=click.Path(), default='linkapy_example', help='Output directory to download the data to.')
+@click.pass_context
+def example(ctx, **kwargs) -> None:
+    '''
+    Download test data and get an example command to use Linkapy to generate matrices.
+    '''
+    from linkapy.example import Linkapy_Example
+    Linkapy_Example(kwargs.get('output'))
+    
