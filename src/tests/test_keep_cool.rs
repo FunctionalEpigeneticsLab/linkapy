@@ -1,34 +1,44 @@
-use crate::reader::parse_region;
-use std::path::Path;
+use crate::keep_cool::{frac_to_sparse, tupvec_to_sparse};
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_region() {
-        // get path to test data relative to test code.
-        // This ensure cargo test can be ran from anywhere.
-        let test_path = Path::new(file!());
-        let bedfile = test_path.parent().unwrap().join("data/region.bed");
-        let bedgzfile = test_path.parent().unwrap().join("data/region.bed.gz");
-        
-        // Parse bed file
-        let bedregions = parse_region(bedfile.to_string_lossy().into_owned(), "bed".to_string());
-        let bedgzregions = parse_region(bedgzfile.to_string_lossy().into_owned(), "bedgz".to_string());
-        // bed file.
-        assert_eq!(bedregions.len(), 1);
-        assert_eq!(bedregions[0].chrom, "chr1");
-        assert_eq!(bedregions[0].start, vec![100]);
-        assert_eq!(bedregions[0].end, vec![200]);
-        assert_eq!(bedregions[0].name, "chr1:100-200");
-        assert_eq!(bedregions[0].class, "bed");
-        // bed gz file.
-        assert_eq!(bedgzregions.len(), 1);
-        assert_eq!(bedgzregions[0].chrom, "chr1");
-        assert_eq!(bedgzregions[0].start, vec![100]);
-        assert_eq!(bedgzregions[0].end, vec![200]);
-        assert_eq!(bedgzregions[0].name, "chr1:100-200");
-        assert_eq!(bedgzregions[0].class, "bedgz");
+    fn test_frac_to_sparse() {
+        let dense = vec![
+            vec![1.0, 2.0, f32::NAN],
+            vec![0.0, 2.0, 3.0],
+            vec![f32::NAN, f32::NAN, 4.0],
+        ];
+        let sparse = frac_to_sparse(dense);
+        assert_eq!(sparse.shape(), (3, 3));
+        assert_eq!(sparse.nnz(), 6);
+        assert_eq!(sparse.get(0, 0), Some(&1.0));
+        assert_eq!(sparse.get(0, 1), Some(&2.0));
+        assert_eq!(sparse.get(1, 0), Some(&0.0));
+        assert_eq!(sparse.get(1, 1), Some(&2.0));
+        assert_eq!(sparse.get(1, 2), Some(&3.0));
+        assert_eq!(sparse.get(2, 2), Some(&4.0));
+    }
+
+    #[test]
+    fn test_tupvec_to_sparse() {
+        let dense = vec![
+            vec![(1.0, 1.0, 1.0), (2.0, 2.0, 2.0), (f32::NAN, f32::NAN, f32::NAN)],
+            vec![(0.0, 0.0, 0.0), (2.0, 2.0, 2.0), (3.0, 3.0 ,3.0)],
+            vec![(f32::NAN, f32::NAN, f32::NAN), (f32::NAN, f32::NAN, f32::NAN), (4.0, 4.0, 4.0)],
+        ];
+        let (mat1, mat2, mat3) = tupvec_to_sparse(dense);
+        for sparse in &[mat1, mat2, mat3] {
+            assert_eq!(sparse.shape(), (3,3));
+            assert_eq!(sparse.nnz(), 6);
+            assert_eq!(sparse.get(0, 0), Some(&1.0));
+            assert_eq!(sparse.get(0, 1), Some(&2.0));
+            assert_eq!(sparse.get(1, 0), Some(&0.0));
+            assert_eq!(sparse.get(1, 1), Some(&2.0));
+            assert_eq!(sparse.get(1, 2), Some(&3.0));
+            assert_eq!(sparse.get(2, 2), Some(&4.0));
+        }
     }
 }
