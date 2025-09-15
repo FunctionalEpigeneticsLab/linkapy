@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/FunctionalEpigeneticsLab/linkapy/compare/v1.3.0...v1.4.0) (2025-09-15)
+
+
+### Features
+
+* example CLI to get example usage. ([#38](https://github.com/FunctionalEpigeneticsLab/linkapy/issues/38)) ([daee609](https://github.com/FunctionalEpigeneticsLab/linkapy/commit/daee6094341d989fc8749c5ef1636977c9fb5b9a))
+
 ## [1.3.0](https://github.com/FunctionalEpigeneticsLab/linkapy/compare/v1.2.1...v1.3.0) (2025-09-12)
 
 
