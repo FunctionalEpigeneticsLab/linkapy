@@ -6,6 +6,7 @@ pub struct Region {
     pub class: String,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct MethRegion {
     pub chrom: String,
     pub pos: u32,
@@ -13,7 +14,7 @@ pub struct MethRegion {
     pub total: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum MethFileType {
     AllCools,
     MethylDackel,

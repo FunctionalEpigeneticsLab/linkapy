@@ -185,7 +185,7 @@ pub fn parse_cools(
     Ok(())
 }
 
-fn frac_to_sparse(dense: Vec<Vec<f32>>) -> CsMat<f32> {
+pub fn frac_to_sparse(dense: Vec<Vec<f32>>) -> CsMat<f32> {
     let max_row = dense.len();
     let max_col = dense.iter().map(|row| row.len()).max().unwrap_or(0);
 
@@ -201,7 +201,7 @@ fn frac_to_sparse(dense: Vec<Vec<f32>>) -> CsMat<f32> {
     mat.to_csr()
 }
 
-fn tupvec_to_sparse(dense: Vec<Vec<(f32, f32, f32)>>) -> (CsMat<f32>, CsMat<f32>, CsMat<f32>) {
+pub fn tupvec_to_sparse(dense: Vec<Vec<(f32, f32, f32)>>) -> (CsMat<f32>, CsMat<f32>, CsMat<f32>) {
     let max_row = dense.len();
     let max_col = dense.iter().map(|row| row.len()).max().unwrap_or(0);
 

@@ -1,8 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader, Read};
 use flate2::read::GzDecoder;
-use crate::types::MethRegion;
-use crate::types::{Region, MethFileType};
+use crate::types::{Region, MethFileType, MethRegion};
 
 pub fn read_meth(_f: &str) -> Vec<MethRegion> {
     let mut methregions: Vec<MethRegion> = Vec::new();
@@ -157,16 +156,14 @@ pub fn parse_region(reg: String, class: String) -> Vec<Region> {
     regions
 }
 
-
-
-fn is_gzipped(path: &str) -> std::io::Result<bool> {
+pub fn is_gzipped(path: &str) -> std::io::Result<bool> {
     let mut file = File::open(path)?;
     let mut magic = [0u8; 2];
     file.read_exact(&mut magic)?;
     Ok(magic == [0x1F, 0x8B])
 }
 
-fn decide_methtype(line: Option<String>) -> MethFileType {
+pub fn decide_methtype(line: Option<String>) -> MethFileType {
     if let Some(l) = line {
         let fields: Vec<&str> = l.split('\t').collect();
         match fields.len() {
