@@ -14,6 +14,14 @@ Usage
 ~~~~~
 
 Linkapy can be used through the command line, or via the API in Python. For the latter, have a look at the `API Reference <../autoapi/index.html>`_.
+To get started, example data from the original `scNMT-seq paper <https://www.nature.com/articles/s41467-018-03149-4>`_ can be downloaded:
+
+.. code-block:: console
+
+    linkapy example -h
+
+Upon successfull download, an example command will be printed that you can use to get started and familiarize yourself with the data structures.
+
 
 .. click:: linkapy.CLI:linkapy
    :prog: linkapy CLI
