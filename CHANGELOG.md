@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/FunctionalEpigeneticsLab/linkapy/compare/v1.4.0...v1.5.0) (2025-09-19)
+
+
+### Features
+
+* Bedmethyl support ([#43](https://github.com/FunctionalEpigeneticsLab/linkapy/issues/43)) ([263c64c](https://github.com/FunctionalEpigeneticsLab/linkapy/commit/263c64cc1e8b2f4d45b5af4159d14957ac622fb7))
+
 ## [1.4.0](https://github.com/FunctionalEpigeneticsLab/linkapy/compare/v1.3.0...v1.4.0) (2025-09-15)
 
 
