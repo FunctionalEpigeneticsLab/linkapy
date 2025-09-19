@@ -51,11 +51,13 @@ mod tests {
         let bismarkcov = test_path.parent().unwrap().join("data/methf_bismarkcov");
         let cpgrep = test_path.parent().unwrap().join("data/methf_cpgrep");
         let methyldackel = test_path.parent().unwrap().join("data/methf_methyldackel");
+        let bedmethyl = test_path.parent().unwrap().join("data/methf_bedmethyl");
         let pairs: Vec<(&str, MethFileType)> = vec![
             (allcoolsf.to_str().unwrap(), MethFileType::AllCools),
             (bismarkcov.to_str().unwrap(), MethFileType::BismarkCov),
             (cpgrep.to_str().unwrap(), MethFileType::BismarkCpGReport),
             (methyldackel.to_str().unwrap(), MethFileType::MethylDackel),
+            (bedmethyl.to_str().unwrap(), MethFileType::BedMethyl),
         ];
         for (f, expected) in pairs {
             let reader = std::io::BufReader::new(std::fs::File::open(f).unwrap());
@@ -74,7 +76,7 @@ mod tests {
         let bismarkcov = test_path.parent().unwrap().join("data/methf_bismarkcov");
         let cpgrep = test_path.parent().unwrap().join("data/methf_cpgrep");
         let methyldackel = test_path.parent().unwrap().join("data/methf_methyldackel");
-
+        let bedmethyl = test_path.parent().unwrap().join("data/methf_bedmethyl");
         let exp_mr = vec![
             MethRegion { chrom: "chr1".to_string(), pos: 0, meth: 1, total: 1 },
             MethRegion { chrom: "chr1".to_string(), pos: 2, meth: 0, total: 1 },
@@ -85,6 +87,7 @@ mod tests {
             bismarkcov.to_str().unwrap(),
             cpgrep.to_str().unwrap(),
             methyldackel.to_str().unwrap(),
+            bedmethyl.to_str().unwrap(),
         ] {
             let methregions = read_meth(f);
             assert_eq!(methregions, exp_mr);

@@ -18,13 +18,17 @@ pub struct MethRegion {
 pub enum MethFileType {
     AllCools,
     MethylDackel,
-    //BismarkBedgraph,
+    BedMethyl,
     BismarkCov,
     BismarkCpGReport,
 }
 
 impl MethFileType {
     pub fn parse_line(&self, line: &str) -> Result<Option<MethRegion>, String> {
+        // Ignore any comment lines (#)
+        if line.starts_with('#') {
+            return Ok(None);
+        };
         match self {
             MethFileType::AllCools => {
                 let fields: Vec<&str> = line.split('\t').collect();
@@ -80,6 +84,18 @@ impl MethFileType {
                 } else {
                     Ok(None)
                 }
+            }
+            MethFileType::BedMethyl => {
+                let fields: Vec<&str> = line.split('\t').collect();
+                if fields.len() != 18 {
+                    return Err(format!("Invalid BedMethyl line: {}", line));
+                }
+                let chrom = fields[0].to_string();
+                // BedMethyl is 0-based.
+                let pos = fields[1].parse::<u32>().map_err(|e| format!("Invalid position in BedMethyl line: {}: {}", line, e))?;
+                let meth = fields[11].parse::<u32>().map_err(|e| format!("Invalid methylated count in BedMethyl line: {}: {}", line, e))?;
+                let total = fields[9].parse::<u32>().map_err(|e| format!("Invalid unmethylated count in BedMethyl line: {}: {}", line, e))?;
+                Ok(Some(MethRegion { chrom, pos, meth, total }))
             }
         }
     }

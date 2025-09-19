@@ -167,9 +167,6 @@ pub fn decide_methtype(line: Option<String>) -> MethFileType {
     if let Some(l) = line {
         let fields: Vec<&str> = l.split('\t').collect();
         match fields.len() {
-            // 4 => {
-            //     Ok(MethFileType::BismarkBedgraph)
-            // },
             6 => {
                 // Either MethylDackel bedgraph or BismarkCov
                 // The difference is small:
@@ -202,6 +199,16 @@ pub fn decide_methtype(line: Option<String>) -> MethFileType {
                     MethFileType::BismarkCpGReport
                 }
             },
+            18 => {
+                // BedMethyl file
+                let meth = fields[11].parse::<u32>();
+                let cov = fields[9].parse::<u32>();
+                if meth.is_ok() && cov.is_ok() {
+                    MethFileType::BedMethyl
+                } else {
+                    panic!("Could not parse BedMethyl coverage and modification counts (columns 9/11) from: {}", l);
+                }
+            }
             _ => panic!("Could not decide methylation filetype, as it has {} columns.", fields.len())
         }
     }
