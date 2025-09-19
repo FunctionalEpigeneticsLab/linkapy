@@ -12,6 +12,7 @@ class TestAllcools:
             ("methyldackel_path", ('*WCGN.bedgraph', '*GCHN.bedgraph')),
             ("bismarkcov_path", ('*WCGN.bismark.cov', '*GCHN.bismark.cov')),
             ("bismarkrep_path", ('*WCGN.bismark.rep.gz', '*GCHN.bismark.rep.gz')),
+            ("bedmethyl_path", ('*WCGN*bed.gz', '*GCHN*bed.gz')),
         ],
         indirect=["dynamic_methylation_path"]
     )
