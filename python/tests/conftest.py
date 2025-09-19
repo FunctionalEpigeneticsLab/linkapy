@@ -200,6 +200,53 @@ def bismarkrep_path(tmp_path):
         f.write('chr1\t230\t+\t0\t100\tCG\tCGN\n')
     return methpath
 
+
+@pytest.fixture
+def bedmethyl_path(tmp_path):
+    '''
+    simulate bedmethyl files.
+    tsv with chrom, start, end, name, score strand,
+    thickstart, thickend, color, validcov, %mod, count_mod
+    count_can, count_other, count_delete, count_fail, count_diff, count_nocall
+    columns.
+    these are 0-based.
+    '''
+    methpath = tmp_path / "bedmethyl"
+    methpath.mkdir()
+
+    # Cell 1 - avg. meth in gene 1 = 50%
+    with gzip.open(methpath / "cell1.WCGN.bed.gz", "wt") as f:
+        f.write('chr1\t20\t21\tm\t100\t+\t20\t21\t255,0,0\t100\t25.00\t25\t75\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t50\t51\tm\t100\t+\t50\t51\t255,0,0\t100\t75.00\t75\t25\t0\t0\t0\t0\t0\n')
+
+    # Cell 2 - avg. meth in gene 2 = 62.5%
+    with gzip.open(methpath / "cell2.WCGN.bed.gz", "wt") as f:
+        f.write('chr1\t221\t222\tm\t4\t+\t221\t222\t255,0,0\t4\t50.00\t2\t2\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t244\t245\tm\t16\t+\t224\t225\t255,0,0\t16\t75.00\t12\t4\t0\t0\t0\t0\t0\n')
+    
+    # Cell 3 - avg. meth in gene 1 = 100%, avg. meth in gene 2 = 0%
+    with gzip.open(methpath / "cell3.WCGN.bed.gz", "wt") as f:
+        f.write('chr1\t20\t21\tm\t21\t+\t20\t21\t255,0,0\t21\t100.00\t21\t0\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t50\t51\tm\t35\t+\t50\t51\t255,0,0\t35\t100.00\t35\t0\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t221\t222\tm\t100\t+\t221\t222\t255,0,0\t100\t0.00\t0\t100\t0\t0\t0\t0\t0\n')
+    
+    # Cell 1 - avg. meth in gene 1 = 25%
+    with gzip.open(methpath / "cell1.GCHN.bed.gz", "wt") as f:
+        f.write('chr1\t30\t31\tm\t100\t+\t30\t31\t255,0,0\t100\t25.00\t25\t75\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t40\t41\tm\t4\t+\t40\t41\t255,0,0\t4\t25.00\t1\t3\t0\t0\t0\t0\t0\n')
+
+    # Cell 2 - avg. meth in gene 2 = 44%
+    with gzip.open(methpath / "cell2.GCHN.bed.gz", "wt") as f:
+        f.write('chr1\t230\t231\tm\t100\t+\t230\t231\t255,0,0\t100\t44.00\t44\t56\t0\t0\t0\t0\t0\n')
+    
+    # Cell 3 - avg. meth in gene 1 = 100%, avg. meth in gene 2 = 0%
+    with gzip.open(methpath / "cell3.GCHN.bed.gz", "wt") as f:
+        f.write('chr1\t30\t31\tm\t100\t+\t30\t31\t255,0,0\t100\t100.00\t100\t0\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t40\t41\tm\t4\t+\t40\t41\t255,0,0\t4\t100.00\t4\t0\t0\t0\t0\t0\t0\n')
+        f.write('chr1\t230\t231\tm\t100\t+\t230\t231\t255,0,0\t100\t0.00\t0\t100\t0\t0\t0\t0\t0\n')
+    return methpath
+
+
 @pytest.fixture
 def rna_path(tmp_path):
     '''
